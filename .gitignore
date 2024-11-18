@@ -12,3 +12,6 @@ venv/
 
 # OS
 .DS_Store 
+
+# audio files
+*.mp3

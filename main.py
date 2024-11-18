@@ -4,21 +4,32 @@ import json
 from typing import List
 from pydub import AudioSegment
 from pathlib import Path
+from gtts import gTTS
+
+
+# try speaking hello world with gTTS
+def text_to_speech(text: str) -> None:
+    gTTS(text=text, lang='en').save("data/gtts.mp3")
+    
 
 # call openai tts api to convert text to audio
-def text_to_audio(json_file: str, output_file: str):
+def text_to_audio(json_file: str, output_file: str, shitty: bool = False):
     with open(json_file, "r") as f:
         data = json.load(f)
 
     text = data[0]['text']
-
+    
+    # gTTS audio
+    text_to_speech(text)
+    
+    # openai audio
     for i, chunk in enumerate(chunk_text(text)):
         # do the rest of the chunks
         if i < 2:
             continue
         
         response = openai.audio.speech.create(
-            model="tts-1-hd",
+            model="tts-1",
             voice="shimmer",
             input=chunk,
             speed=1.1
@@ -64,4 +75,7 @@ def splice_audio(path_to_folder: str):
     
 
 if __name__ == "__main__":
-    splice_audio("data")
+    with open("data/test.json", "r") as f:
+        data = json.load(f)
+        
+    text_to_speech(data[0]['text'])
